@@ -5,8 +5,8 @@ const envKey = key => {
 
   const configuration = {
     development: {
-      host: (process.env.HOST) ? '0.0.0.0' : 'localhost',
-      port: (process.env.PORT || 3333),
+      host: '0.0.0.0',
+      port: 3333,
     },
     staging: {
       host: '192.168.1.1',
