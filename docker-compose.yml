@@ -1,0 +1,63 @@
+version: '3'
+
+services:
+  mongo:
+    container_name: be_mongodb
+    image: ${I_DATABASE}
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+    #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+    ports:
+      - "27017:27017"
+    restart: always
+    volumes:
+        - mongodb:/data/db
+        - mongodb_config:/data/configdb
+    networks:
+      - boilerplate-api-network
+
+  mongo-express:
+    container_name: be_mongo_express
+    image: ${I_MNG_DATABASE}
+    ports:
+        - 8081:8081
+    environment:
+        ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME}
+        ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD}
+        # ME_CONFIG_MONGODB_PORT: ${ME_CONFIG_MONGODB_PORT}
+        # ME_CONFIG_MONGODB_ADMINUSERNAME: ${ME_CONFIG_MONGODB_ADMINUSERNAME}
+        # ME_CONFIG_MONGODB_ADMINPASSWORD: ${ME_CONFIG_MONGODB_ADMINPASSWORD}
+    links:
+        - mongo
+    restart: always
+    networks:
+        - boilerplate-api-network
+   
+  backend:
+    container_name: be_api
+    image: ${I_API}
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+        - "3333:3333"
+    volumes: 
+        - .:/app
+        - /app/node_modules
+    links: 
+        - mongo
+    restart: always
+    depends_on: 
+        - mongo
+    environment: 
+        MONGODB_URI: ${MONGO_DB_URI}
+    networks: 
+        - boilerplate-api-network
+
+volumes:
+    mongodb:
+    mongodb_config:
+
+networks: 
+    boilerplate-api-network:
+      driver: bridge

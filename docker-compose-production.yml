@@ -1,0 +1,18 @@
+version: '3'
+services:
+   backend:
+      build:
+         context: .
+         dockerfile: Dockerfile.release
+      container_name: backend-pikobar-production
+      ports: 
+         - 3333:3333
+      env_file: 
+        - .env
+      networks:
+        - gateway 
+
+networks:
+   gateway:
+       external:
+           name: jds-dev-network
