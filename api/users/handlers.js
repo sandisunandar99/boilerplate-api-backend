@@ -117,7 +117,7 @@ module.exports = (server) => {
       // TODO: Better error response
         if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
         if (!user) return reply().code(422)
-        return reply(constructUsersResponse(user))
+        return reply(constructUserResponse(user))
       })
     },
     /**
