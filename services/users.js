@@ -24,7 +24,18 @@ const listUser = async (user, query, callback) => {
     customLabels: myCustomLabels,
   };
 
-  User.paginate({}, options).then(function(results){
+  if(query.search){
+    var search_params = [
+      { username : new RegExp(query.search,"i") },
+      { fullname: new RegExp(query.search, "i") },
+      { email: new RegExp(query.search, "i") }
+    ];
+    result_search = User.find().or(search_params).where("delete_status").ne("deleted");
+  } else {
+    result_search = User.find().where("delete_status").ne("deleted");
+  }
+
+  User.paginate(result_search, options).then(function (results) {
     const res = {
       users: results.itemsList.map(users => users.toJSONFor()),
       _meta: results._meta,
