@@ -11,7 +11,7 @@
 Clone project and install dependencies:
 ```bash
 $ https://github.com/sandisunandar99/boilerplate-api-backend.git
-$ cd pikobar-pelaporan-backend
+$ cd boilerplate-api-backend
 $ docker-compose up --build
 ```
 
