@@ -52,11 +52,21 @@ const resetPasswordbyId = async (pay, id, category, user, callback) => {
   }
 }
 
-const getUserByUsername = (username, callback) => {
+const getUserByUsername = async (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
     return callback(null, user);
   });
+}
+
+const getUserById = async (id, category, callback) => {
+  let result;
+  try {
+    result = await User.findById(id)
+    callback(null, result);
+  } catch (error) {
+    callback(error, null);
+  }
 }
 
 const createUser = async (payload, callback) => {
@@ -127,6 +137,10 @@ module.exports = [
   {
     name: 'services.users.getByUsername',
     method: getUserByUsername
+  },
+  {
+    name: 'services.users.getById',
+    method: getUserById
   },
   {
     name: 'services.users.create',
