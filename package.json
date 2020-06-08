@@ -2,7 +2,7 @@
   "name": "hapi-api",
   "version": "1.0.0",
   "license": "MIT",
-  "description": "Api backend pikobar apps",
+  "description": "Api backend boilerplate",
   "bugs": {
     "url": "https://github.com/sandisunandar99/boilerplate-api-backendissues"
   },
