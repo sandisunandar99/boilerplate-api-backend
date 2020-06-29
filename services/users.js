@@ -66,7 +66,7 @@ const resetPasswordbyId = async (pay, id, category, user, callback) => {
 const getUserByUsername = async (username, callback) => {
   User.findOne({ username }, (err, user) => {
     if (err) return callback(err, null);
-    return callback(null, user);
+    return callback(null, user); 
   });
 }
 

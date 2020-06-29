@@ -1,11 +1,11 @@
 const CheckRoleView = server => {
     return {
-        method: (request, reply) => {
+        method: (request, h) => {
 
             if (request.auth.credentials.user.role === "admin" || request.auth.credentials.user.role === "user") {
-                return reply(request.auth.credentials.user.role)
+                return h.response(request.auth.credentials.user.role)
             } else {
-                return reply({
+                return h.response({
                     status: 403,
                     message: 'You cannot accessed !',
                     data: null
@@ -19,12 +19,12 @@ const CheckRoleView = server => {
 
 const CheckRoleCreate = server => {
     return {
-        method: (request, reply) => {
+        method: (request, h) => {
 
             if (request.auth.credentials.user.role === "admin") {
-                return reply(request.auth.credentials.user.role)
+                return h.response(request.auth.credentials.user.role)
             } else {
-                return reply({
+                return h.response({
                     status: 403,
                     message: 'You cannot accessed !',
                     data: null
@@ -38,12 +38,12 @@ const CheckRoleCreate = server => {
 
 const CheckRoleUpdate = server => {
     return {
-        method: (request, reply) => {
+        method: (request, h) => {
 
             if (request.auth.credentials.user.role === "admin") {
-                return reply(request.auth.credentials.user.role)
+                return h.response(request.auth.credentials.user.role)
             } else {
-                return reply({
+                return h.response({
                     status: 403,
                     message: 'You cannot accessed !',
                     data: null
@@ -57,11 +57,11 @@ const CheckRoleUpdate = server => {
 
 const CheckRoleDelete = server => {
     return {
-        method: (request, reply) => {
+        method: (request, h) => {
             if (request.auth.credentials.user.role === "admin") {
-                return reply(request.auth.credentials.user.role)
+                return h.response(request.auth.credentials.user.role)
             } else {
-                return reply({
+                return h.response({
                     status: 403,
                     message: 'You cannot accessed !',
                     data: null
@@ -75,12 +75,12 @@ const CheckRoleDelete = server => {
 
 const CheckRoleResetPasswordMe = server => {
     return {
-        method: (request, reply) => {
+        method: (request, h) => {
 
             if (request.auth.credentials.user.role === "user") {
-                return reply(request.auth.credentials.user.role)
+                return h.response(request.auth.credentials.user.role)
             } else {
-                return reply({
+                return h.response({
                     status: 403,
                     message: 'You cannot accessed !',
                     data: null

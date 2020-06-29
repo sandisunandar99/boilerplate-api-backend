@@ -1,4 +1,4 @@
-const replyHelper = require('../helpers')
+const Helper = require('../helpers')
 
 module.exports = (server) => {
   function constructUserResponse(user) {
@@ -23,117 +23,118 @@ module.exports = (server) => {
     /**
      * GET /api/users
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async getListUser (request, reply) {
+    async getListUser (request, h) {
       server.methods.services.users.listUser(
         request.auth.credentials.user,
         request.query, (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(constructUsersResponse(listUser))
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
+        return h.response(constructUsersResponse(listUser))
       })
     },
     /**
      * GET /api/users/{id}
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async getUserById (request, reply) {
+    async getUserById (request, h) {
       server.methods.services.users.getById(
         request.params.id, "update", (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
+        return h.response(constructUsersResponse(listUser));
       });
     },
     /**
      * PUT /api/users/reset/{id}
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async resetPasswordbyId(request, reply) {
+    async resetPasswordbyId(request, h) {
       server.methods.services.users.resetPasswordbyId(
         request.payload, request.params.id, "reset", request.auth.credentials.user, (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
+        return h.response(constructUsersResponse(listUser));
       });
     },
     /**
      * GET /api/users
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async getCurrentUser (request, reply) {
-      return reply(constructUserResponse(request.auth.credentials.user))
+    async getCurrentUser (request, h) {
+      return h.response(constructUserResponse(request.auth.credentials.user))
     },
     /**
      * DELETE /api/users/{id}
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async deleteUsers (request, reply) {
+    async deleteUsers (request, h) {
       server.methods.services.users.updateUsers(
         request.params.id, request.payload, "delete",
         request.auth.credentials.user._id,
         (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
+        return h.response(constructUsersResponse(listUser));
       })
     },
     /**
      * PUT /api/users/{id}
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async updateUsers (request, reply) {
+    async updateUsers (request, h) {
       server.methods.services.users.updateUsers(
         request.params.id, request.payload, "update",
         request.auth.credentials.user._id,
         (err, listUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422);
-        return reply(constructUsersResponse(listUser));
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
+        return h.response(constructUsersResponse(listUser));
       })
     },
     /**
      * PUT /api/users/change-password
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async changePassword(request, reply) {
+    async changePassword(request, h) {
       let payload = request.payload
       let user = request.auth.credentials.user
       server.methods.services.users.changePassword(user, payload, (err, updatedUser) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        return reply(constructUserResponse(updatedUser))
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
+        return h.response(constructUserResponse(updatedUser))
       })
     },
     /**
      * POST /api/users
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async registerUser(request, reply) {
+    async registerUser(request, h) {
       let payload = request.payload
       server.methods.services.users.create(payload, (err, user) => {
       // TODO: Better error response
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
-        if (!user) return reply().code(422)
-        return reply(constructUserResponse(user))
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
+        if (!user) return h.response().code(422)
+        return h.response(constructUserResponse(user))
       })
     },
     /**
      * POST /api/users/login
      * @param {*} request
-     * @param {*} reply
+     * @param {*} h
      */
-    async loginUser(request, reply) {
+    async loginUser(request, h) {
       let payload = request.payload
+      
       server.methods.services.users.getByUsername(
         payload.username, 
-        (err, user) => {
-        if (err) return reply(replyHelper.constructErrorResponse(err)).code(422)
+        async (err, user) => {
+        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
 
         if (!user) {
-          return reply({
+          return h.response({
             "status":404,
             "message": 'username atau password salah!',
             "data": null
@@ -141,15 +142,14 @@ module.exports = (server) => {
         }
 
         if (!user.validPassword(payload.password)) {
-          return reply({
+          return h.response({
             "status":404,
             "message": 'username atau password salah!',
             "data": null
           }).code(401)
-        }
-
-        return reply(constructUserResponse(user))
-      });
+        }      
+        return h.response(constructUserResponse(user))
+      })
     },
   }//end retun
 }
