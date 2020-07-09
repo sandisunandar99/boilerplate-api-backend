@@ -63,11 +63,13 @@ const resetPasswordbyId = async (pay, id, category, user, callback) => {
   }
 }
 
-const getUserByUsername = async (username, callback) => {
-  User.findOne({ username }, (err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user); 
-  });
+const getUserByUsername = async (username) => {
+  try {
+    let users = await User.findOne({username})
+    return users
+  } catch (error) {
+    Bounce.rethrow(error, "loginUser")
+  }
 }
 
 const getUserById = async (id, category, callback) => {

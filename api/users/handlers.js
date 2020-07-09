@@ -1,4 +1,5 @@
 const Helper = require('../helpers')
+const Bounce = require('@hapi/bounce')
 
 module.exports = (server) => {
   function constructUserResponse(user) {
@@ -126,30 +127,30 @@ module.exports = (server) => {
      * @param {*} h
      */
     async loginUser(request, h) {
-      let payload = request.payload
-      
-      server.methods.services.users.getByUsername(
-        payload.username, 
-        async (err, user) => {
-        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
+        let payload = request.payload
+        try {
+          let user = await server.methods.services.users.getByUsername(payload.username)
+           if (!user) {
+             return h.response({
+               "status":404,
+               "message": 'user not found!',
+               "data": null
+             }).code(404)
+           }
 
-        if (!user) {
-          return h.response({
-            "status":404,
-            "message": 'username atau password salah!',
-            "data": null
-          }).code(404)
+           if (!user.validPassword(payload.password)) {
+             return h.response({
+               "status":404,
+               "message": 'wrong username or password!',
+               "data": null
+             }).code(401)
+           }   
+          
+           return h.response(constructUserResponse(user))
+        } catch (error) {
+           Bounce.rethrow(error, "system") // Rethrows system errors and ignores application errors
         }
 
-        if (!user.validPassword(payload.password)) {
-          return h.response({
-            "status":404,
-            "message": 'username atau password salah!',
-            "data": null
-          }).code(401)
-        }      
-        return h.response(constructUserResponse(user))
-      })
     },
   }//end retun
 }
