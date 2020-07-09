@@ -25,6 +25,7 @@
     "backend"
   ],
   "dependencies": {
+    "@hapi/bounce": "^2.0.0",
     "ajv": "^6.12.2",
     "ajv-keywords": "^3.5.0",
     "bcrypt-nodejs": "0.0.3",
