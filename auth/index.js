@@ -1,23 +1,26 @@
 const config = require('../config/config');
 const mongoose = require('mongoose');
+const Bounce = require('@hapi/bounce')
 
 exports.plugin = {
   name: "auth",
   register: async (server, options) => {
-    var validateFunc = (decoded, request, callback) => {
-      var id = mongoose.Types.ObjectId(decoded.id);
-
-      server.app.db.User.findById(id, (err, user) => {
-        if (err) return callback(err, false);
-
-        if (!user) {
-          return callback(null, false);
-        }
+    let validateFunc = async (decoded, request) => {
+      let id = mongoose.Types.ObjectId(decoded.id);
+      try {
+        let user = await server.app.db.User.findById(id)
         
-        return callback(null, true, {user});
-      });
-    };
+        if(!user){
+           return { isValid: false };
+        }
 
+         return { isValid: true, credentials: {user}} ;
+      } catch (error) {
+        Bounce.rethrow(error, 'auth')
+      }
+    
+    }
+    
     server.auth.strategy('jwt', 'jwt', {
       key: config.auth.secret,
       validate: validateFunc,
