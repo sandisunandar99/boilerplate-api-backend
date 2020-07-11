@@ -6,7 +6,7 @@ module.exports = (server) => {
     let authUser = { 
       status : 200,
       message: true,
-      data : user.toAuthJSON() 
+      data : user.toAuthJSON()
     }
     return authUser
   }
