@@ -1,57 +1,56 @@
-const register = (server, options, next) => {
+exports.plugin = {
+  name: "API",
+  register: async (server, options) => {
 
-  const preResponse = (request, reply) => {
-    let response = request.response
-    // console.log('RESPONSE :', response);
-    if (response.isBoom) {
-      const reformated = {}
-      reformated.status = response.output.statusCode
-      reformated.message = response.output.payload.message
-      reformated.data = null
-      return reply(reformated).code(response.output.statusCode)
+    const preResponse = (request, h) => {
+      let response = request.response
+      // console.log('RESPONSE :', response)
+      if (response.isBoom) {
+        const reformated = {}
+        reformated.status = response.output.statusCode
+        reformated.message = response.output.payload.message
+        reformated.data = null
+        return h.response(reformated).code(response.output.statusCode)
+      }
+      return h.continue
     }
-    return reply.continue()
-  }
 
-  const onRequest = (request, reply) =>{
-    // console.log('INFO:', request.info);
-    return reply.continue()
-  }
-
-  const format = (seconds) => {
-    const pad = (s) => {
-      return (s < 10 ? '0' : '') + s;
+    const onRequest = (request, h) =>{
+      // console.log('INFO:', request.info);
+      return h.continue
     }
-    var hours = Math.floor(seconds / (60*60));
-    var minutes = Math.floor(seconds % (60*60) / 60);
-    var seconds = Math.floor(seconds % 60);
-  
-    return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
-  }
 
-  server.register(require('./users'))
-
-  server.ext('onPreResponse', preResponse)
-  server.ext('onRequest', onRequest)
-
-  server.route({
-    method: 'GET',
-    path: '/status',
-    config: {
-      description: 'Check status',
-      notes: 'Check status of the API',
-      tags: ['api', 'status']
-    },
-    handler: (request, reply) => {
-      return reply({status: `UP in ${format(require('os').uptime())}`})
+    const format = (seconds) => {
+      const pad = (s) => {
+        return (s < 10 ? '0' : '') + s;
+      }
+      var hours = Math.floor(seconds / (60*60));
+      var minutes = Math.floor(seconds % (60*60) / 60);
+      var seconds = Math.floor(seconds % 60);
+    
+      return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
     }
-  })
 
-  return next()
-}
+    server.register(require('./users'))
 
-register.attributes = {
-  pkg: require('./package.json')
-}
+    server.ext('onPreResponse', preResponse)
+    server.ext('onRequest', onRequest)
 
-module.exports = register
+    server.route({
+      method: 'GET',
+      path: '/status',
+      config: {
+        description: 'Check status',
+        notes: 'Check status of the API',
+        tags: ['api', 'status']
+      },
+      handler: async (request, h) => { 
+        return h.response({status: `UP in ${format(require('os').uptime())}`})
+      }
+    })
+
+    return "ok"
+  }
+}//end export
+
+

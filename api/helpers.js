@@ -59,11 +59,11 @@
   const constructErrorResponse = (err) => {
     var response
     for (var handler in errorHandlers) {
-
       let handlerFn = errorHandlers[handler]
-
+      
       if (typeof (handlerFn) === 'function') {
         response = handlerFn(err)
+
         if (response !== null) break
       }
     }

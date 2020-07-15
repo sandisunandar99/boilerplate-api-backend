@@ -1,12 +1,9 @@
-const Routes = require('./routes');
-
-const register = (server, options, next) => {
-  server.route(Routes(server));
-  next();
+ const Routes = require('./routes');
+ 
+exports.plugin ={
+   name : "users", 
+   register: async (server, options) => {
+      server.route(Routes(server));
+      return "ok"
+   }
 }
-
-register.attributes = {
-  pkg: require('./package.json')
-}
-
-module.exports = register;
