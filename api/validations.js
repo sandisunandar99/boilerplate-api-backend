@@ -1,7 +1,6 @@
 const Joi = require('joi')
 const constructErrorResponse = require('./helpers').constructErrorResponse
 const _ = require('lodash')
-const { LoginPayload } = require('./users/validations/input')
 
 const errorHandler = async (request, h, error) => {
   let result = await constructErrorResponse(error)
