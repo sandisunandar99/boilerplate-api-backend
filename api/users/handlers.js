@@ -114,12 +114,18 @@ module.exports = (server) => {
      */
     async registerUser(request, h) {
       let payload = request.payload
-      server.methods.services.users.create(payload, (err, user) => {
-      // TODO: Better error response
-        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
-        if (!user) return h.response().code(422)
-        return h.response(constructUserResponse(user))
-      })
+      try {
+        let users = await server.methods.services.users.create(payload)
+        
+        if (!users) return h.response().code(422).takeover()
+        if (users.errors) return h.response(Helper.constructErrorResponse(users)).code(422)
+        
+        return h.response(constructUserResponse(users))
+        
+      } catch (error) {
+        console.error(error);
+      }
+      
     },
     /**
      * POST /api/users/login
@@ -148,7 +154,7 @@ module.exports = (server) => {
           
            return h.response(constructUserResponse(user))
         } catch (error) {
-           Bounce.rethrow(error, "system") // Rethrows system errors and ignores application errors
+           Bounce.rethrow(error, "login") // Rethrows system errors and ignores application errors
         }
 
     },
