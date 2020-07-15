@@ -1,12 +1,11 @@
-exports.plugin ={
-  name : "services", 
+'use strict'
+exports.plugin = {
+  name: 'services',
   register: async (server, options) => {
-    let services = [].concat(
+    const services = [].concat(
       require('./users')
-    );
+    )
     server.method(services)
-
-    return "ok"
+    return 'ok'
   }
-
 }

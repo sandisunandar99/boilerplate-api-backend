@@ -1,4 +1,8 @@
-require('../models/User');
+'use strict'
+const paginate = require('../helpers/paginate')
+const custom = require('../helpers/custom')
+const crypto = require('crypto')
+const userSchema = require('../models/User')
 
 const mongoose = require('mongoose');
 const crypto = require('crypto');
@@ -105,7 +109,7 @@ const changePassword = (user, payload, callback) => {
     email: payload.email ? payload.email: user.email,
     role: payload.role ? payload.role: user.role,
   }
-  
+
   user = Object.assign(user, users);
 
   user.save((err, user) => {
@@ -129,7 +133,7 @@ const updateUsers = async (id, pay, category, author, callback) =>{
       payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
     }
     const params = Object.assign(payload,payloads);
-    
+
     const result = await User.findByIdAndUpdate(id,
     { $set: params }, { new: true });
     callback(null, result);
@@ -169,4 +173,4 @@ module.exports = [
     method: updateUsers
   },
 ];
- 
+
