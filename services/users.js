@@ -3,6 +3,7 @@ require('../models/User');
 const mongoose = require('mongoose');
 const crypto = require('crypto');
 const User = mongoose.model('User');
+const Bounce = require('@hapi/bounce')
 
 
 const listUser = async (user, query, callback) => {
@@ -82,15 +83,15 @@ const getUserById = async (id, category, callback) => {
   }
 }
 
-const createUser = async (payload, callback) => {
+const createUser = async (payload) => {
   try {
-    payload.salt = crypto.randomBytes(16).toString('hex');
-    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
-    const user = new User(payload);
-    const result = await user.save();
-    callback(null, result);
+    payload.salt = crypto.randomBytes(16).toString('hex')
+    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex')
+    let user = await new User(payload)
+    let result = await user.save()
+    return result
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 

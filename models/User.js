@@ -20,7 +20,10 @@ const UserSchema = new mongoose.Schema({
 UserSchema.plugin(uniqueValidator, {
   message: 'user is existed!'
 });
-UserSchema.plugin(mongoosePaginate);
+UserSchema.index({email: 1}, {unique: true})
+UserSchema.index({username: 1},{unique: true})
+UserSchema.plugin(mongoosePaginate)
+
 UserSchema.methods.validPassword = function (password) {
   const hash = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
   return this.hash === hash;
