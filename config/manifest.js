@@ -1,116 +1,107 @@
-require('dotenv').config();
-
+'use strict'
+require('dotenv').config()
 const envKey = key => {
-  const env = process.env.NODE_ENV || 'development';
-
+  const env = process.env.NODE_ENV || 'development'
   const configuration = {
     development: {
       host: '0.0.0.0',
-      port: 3333,
+      port: 3333
     },
     staging: {
       host: '192.168.1.1',
-      port: 3333,
+      port: 3333
     },
     production: {
       host: process.env.HOST,
       port: process.env.PORT
     }
-  };
-
-  return configuration[env][key];
-};
+  }
+  return configuration[env][key]
+}
 
 const manifest = {
   server: {
-    host: envKey("host"),
-    port: envKey("port"),
+    host: envKey('host'),
+    port: envKey('port'),
     routes: {
       security: {
         hsts: {
           maxAge: 15552000,
-          includeSubdomains: true,
+          includeSubdomains: true
         },
         xframe: true,
         xss: true,
         noOpen: false,
-        noSniff: true,
+        noSniff: true
       },
       cors: {
         // origin: ["http://localhost:8080"],
-        origin: ["*"],
+        origin: ['*'],
         headers: [
-          "Origin",
-          "Access-Control-Allow-Headers",
-          "Access-Control-Allow-Origin",
-          "Accept",
-          "Authorization",
-          "Content-Type",
-          "If-None-Match",
-          "Accept-language",
+          'Origin',
+          'Access-Control-Allow-Headers',
+          'Access-Control-Allow-Origin',
+          'Accept',
+          'Authorization',
+          'Content-Type',
+          'If-None-Match',
+          'Accept-language'
         ],
-        credentials: true,
-      },
+        credentials: true
+      }
     },
     router: {
-      stripTrailingSlash: true,
-    },
+      stripTrailingSlash: true
+    }
   },
   register: {
     plugins: [
-      { plugin: "hapi-auth-jwt2"},
-      // {
-      //   plugin: require("hapi-auth-basic")
-      // },
-      // {
-      //   plugin: require("hapi-authorization")
-      // },
+      { plugin: 'hapi-auth-jwt2' },
       {
-        plugin: "./auth",
+        plugin: './auth'
       },
       {
-        plugin: "./services",
+        plugin: './services'
       },
       {
-        plugin: "./models",
+        plugin: './models'
       },
       {
-        plugin: "./api",
+        plugin: './api',
         routes: {
-          prefix: "/api"
+          prefix: '/api'
         }
       },
       {
-        plugin: require("good"),
+        plugin: require('good'),
         options: {
           ops: {
-                interval: 60000
-            },
-            reporters: {
-                myConsoleReporter: [
-                    {
-                        module: 'good-squeeze',
-                        name: 'Squeeze',
-                        args: [{ log: '*', response: '*', ops: '*' }]
-                    },
-                    {
-                        module: 'good-console'
-                    },
-                    'stdout'
-                ]
-            }
+            interval: 60000
+          },
+          reporters: {
+            myConsoleReporter: [
+              {
+                module: 'good-squeeze',
+                name: 'Squeeze',
+                args: [{ log: '*', response: '*', ops: '*' }]
+              },
+              {
+                module: 'good-console'
+              },
+              'stdout'
+            ]
+          }
         }
-      },
-    ],
-  },
-};
+      }
+    ]
+  }
+}
 
 if (!process.env.PRODUCTION) {
   manifest.register.plugins.push({
-    plugin: "blipp",
+    plugin: 'blipp',
     options: { showAuth: true }
   })
 }
 
-
-module.exports = manifest;
+module.exports = manifest
