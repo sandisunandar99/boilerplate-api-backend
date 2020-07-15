@@ -25,7 +25,7 @@ Run tests (tester apps):
 $ npm test
 ```
 
-## Project Structure
+## Beautiful design structure
 ```
 .
 ├── api/
