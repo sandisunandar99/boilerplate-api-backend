@@ -1,5 +1,4 @@
 const Helper = require('../helpers')
-const Bounce = require('@hapi/bounce')
 
 module.exports = (server) => {
   function constructUserResponse(user) {
@@ -154,7 +153,7 @@ module.exports = (server) => {
           
            return h.response(constructUserResponse(user))
         } catch (error) {
-           Bounce.rethrow(error, "login") // Rethrows system errors and ignores application errors
+          console.error(error);
         }
 
     },
