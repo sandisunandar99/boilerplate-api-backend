@@ -1,13 +1,9 @@
 'use strict'
-const paginate = require('../helpers/paginate')
-const custom = require('../helpers/custom')
-const crypto = require('crypto')
-const userSchema = require('../models/User')
 
-const mongoose = require('mongoose');
-const crypto = require('crypto');
-const User = mongoose.model('User');
-const Bounce = require('@hapi/bounce')
+const mongoose = require('mongoose')
+const crypto = require('crypto')
+require('../models/User')
+const User = mongoose.model('User')
 
 
 const listUser = async (user, query, callback) => {
@@ -73,7 +69,7 @@ const getUserByUsername = async (username) => {
     let users = await User.findOne({username})
     return users
   } catch (error) {
-    Bounce.rethrow(error, "loginUser")
+    console.error(error);
   }
 }
 
