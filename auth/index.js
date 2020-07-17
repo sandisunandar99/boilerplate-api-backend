@@ -1,7 +1,6 @@
 'use strict'
 const config = require('../config/config')
 const mongoose = require('mongoose')
-const Bounce = require('@hapi/bounce')
 
 exports.plugin = {
   name: 'auth',
@@ -15,7 +14,7 @@ exports.plugin = {
         }
         return { isValid: true, credentials: { user } }
       } catch (error) {
-        Bounce.rethrow(error, 'auth')
+        console.error(error);
       }
     }
     server.auth.strategy('jwt', 'jwt', {
