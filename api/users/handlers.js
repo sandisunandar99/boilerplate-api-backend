@@ -1,4 +1,5 @@
 const Helper = require('../helpers')
+const { auth } = require('../../config/config')
 
 module.exports = (server) => {
   function constructUserResponse(user) {
@@ -26,12 +27,20 @@ module.exports = (server) => {
      * @param {*} h
      */
     async getListUser (request, h) {
-      server.methods.services.users.listUser(
-        request.auth.credentials.user,
-        request.query, (err, listUser) => {
-        if (err) return h.response(Helper.constructErrorResponse(err)).code(422)
-        return h.response(constructUsersResponse(listUser))
-      })
+      let credentials = request.auth.credentials.user
+      let query = request.query
+      try {
+        let users = await server.methods.services.users.listUser(credentials, query)
+
+        if (!users) return h.response().code(422).takeover()
+        if (users.errors) return h.response(Helper.constructErrorResponse(users)).code(422)
+
+        return h.response(constructUsersResponse(users))
+
+      } catch (error) {
+        console.error(error);
+      }
+
     },
     /**
      * GET /api/users/{id}
@@ -39,11 +48,24 @@ module.exports = (server) => {
      * @param {*} h
      */
     async getUserById (request, h) {
-      server.methods.services.users.getById(
-        request.params.id, "update", (err, listUser) => {
-        if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
-        return h.response(constructUsersResponse(listUser));
-      });
+      // server.methods.services.users.getById(
+      //   request.params.id, "update", (err, listUser) => {
+      //   if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
+      //   return h.response(constructUsersResponse(listUser));
+      // });
+
+      let id = request.params.id
+      let method = "update"
+
+      try {
+        let users = await server.methods.services.users.getById(id, method)
+        if (!users) return h.response().code(422).takeover()
+        if (users.errors) return h.response(Helper.constructErrorResponse(users)).code(422)
+
+        return h.response(constructUsersResponse(users))
+      } catch (error) {
+        console.error(error)
+      }
     },
     /**
      * PUT /api/users/reset/{id}
@@ -85,13 +107,28 @@ module.exports = (server) => {
      * @param {*} h
      */
     async updateUsers (request, h) {
-      server.methods.services.users.updateUsers(
-        request.params.id, request.payload, "update",
-        request.auth.credentials.user._id,
-        (err, listUser) => {
-        if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
-        return h.response(constructUsersResponse(listUser));
-      })
+      // server.methods.services.users.updateUsers(
+      //   request.params.id, request.payload,
+      //   "update",
+      //   request.auth.credentials.user._id,
+      //   (err, listUser) => {
+      //   if (err) return h.response(Helper.constructErrorResponse(err)).code(422);
+      //   return h.response(constructUsersResponse(listUser));
+      // })
+      let id = request.params.id
+      let payload = request.payload
+      let category = "update"
+      let auhtor = request.auth.credentials.user._id
+      try {
+        let users = await server.methods.services.users.updateUsers(id, payload, category, auhtor)
+        if (!users) return h.response().code(422).takeover()
+        if (users.errors) return h.response(Helper.constructErrorResponse(users)).code(422)
+
+        return h.response(constructUsersResponse(users))
+      } catch (error) {
+        console.error(error);
+      }
+      
     },
     /**
      * PUT /api/users/change-password
