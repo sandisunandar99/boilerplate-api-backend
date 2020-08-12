@@ -10,7 +10,7 @@
   "scripts": {
     "test": "./node_modules/lab/bin/lab -v",
     "start": "npm-run-all --parallel start:server",
-    "start:server": "nodemon --max-old-space-size=2048 server.js"
+    "start:server": "nodemon --max-old-space-size=2048 --legacy-watch server.js"
   },
   "author": "Sandi Sunandar",
   "homepage": "https://github.com/sandisunandar99/boilerplate-api-backend#readme",
