@@ -6,7 +6,7 @@ require('../models/User')
 const User = mongoose.model('User')
 
 
-const listUser = async (user, query, callback) => {
+const listUser = async (user, query) => {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -25,6 +25,7 @@ const listUser = async (user, query, callback) => {
     customLabels: myCustomLabels,
   };
 
+  let result_search
   if(query.search){
     var search_params = [
       { username : new RegExp(query.search,"i") },
@@ -36,13 +37,18 @@ const listUser = async (user, query, callback) => {
     result_search = User.find().where("delete_status").ne("deleted");
   }
 
-  User.paginate(result_search, options).then(function (results) {
-    const res = {
-      users: results.itemsList.map(users => users.toJSONFor()),
-      _meta: results._meta,
-    }
-    return callback(null, res);
-  }).catch(err => callback(err, null));
+  try {
+    let getUser = await User.paginate(result_search, options)
+    let result = {
+      users: getUser.itemsList.map(users => users.toJSONFor()),
+      _meta: getUser._meta,
+    } 
+    return result
+  } catch (error) {
+    return error
+  }
+
+  
 }
 
 const resetPasswordbyId = async (pay, id, category, user, callback) => {
@@ -73,13 +79,12 @@ const getUserByUsername = async (username) => {
   }
 }
 
-const getUserById = async (id, category, callback) => {
-  let result;
+const getUserById = async (id) => {
   try {
-    result = await User.findById(id)
-    callback(null, result);
+    let result = await User.findById(id)
+    return result.toJSONFor()
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 
@@ -114,7 +119,7 @@ const changePassword = (user, payload, callback) => {
   });
 }
 
-const updateUsers = async (id, pay, category, author, callback) =>{
+const updateUsers = async (id, pay, category, author) =>{
   try {
     const payloads = {};
     const payload = (pay == null ? {} : pay );
@@ -129,12 +134,12 @@ const updateUsers = async (id, pay, category, author, callback) =>{
       payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
     }
     const params = Object.assign(payload,payloads);
-
+    console.log(params);
     const result = await User.findByIdAndUpdate(id,
     { $set: params }, { new: true });
-    callback(null, result);
+    return result
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 
