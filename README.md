@@ -1,6 +1,6 @@
 # Boilerplate API for backend app
 
-## Core Stack
+## :star2: Core Stack :star2:
 
 - **Node.js** - [http://nodejs.org/](http://nodejs.org/)
 - **Hapi.js v.17** - [http://hapijs.com/](http://hapijs.com/)
@@ -57,6 +57,8 @@ $ npm test
 
 <a href="https://www.buymeacoffee.com/sandisunandar99" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
+## :sparkling_heart: Bonus :sparkling_heart:
+POSTMAN Rest API, check on folder.. happy coding :kissing_heart::kissing_heart::kissing_heart:
 
 ## License
 Permission is hereby granted, free of charge, to any person obtaining a copy
