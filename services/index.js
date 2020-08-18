@@ -1,13 +1,11 @@
-const register = (server, options, next) => {
-  let services = [].concat(
+'use strict'
+exports.plugin = {
+  name: 'services',
+  register: async (server, options) => {
+    const services = [].concat(
       require('./users')
-    );
+    )
     server.method(services)
-    return next()
+    return 'ok'
   }
-
-  register.attributes = {
-    pkg: require('./package.json')
-  }
-
-  module.exports = register
+}

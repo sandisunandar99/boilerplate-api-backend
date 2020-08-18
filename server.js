@@ -1,30 +1,17 @@
-'use strict';
+'use strict'
+const Glue = require('glue')
+const manifest = require('./config/manifest')
 
-const Glue = require('glue');
-const manifest = require('./config/manifest');
-const mongoose = require('mongoose');
-const db = require('./config/config');
-
-if (!process.env.PRODUCTION) {
-  manifest.registrations.push({
-    "plugin": {
-      "register": "blipp",
-      "options": {}
-    }
-  });
+const startServer = async () => {
+  try {
+    // start server
+    const server = await Glue.compose(manifest, { relativeTo: __dirname })
+    await server.start()
+    console.info(`✅ Server started at: ${server.info.uri}`)
+  } catch (err) {
+    console.error('Catch error on server start. Process will terminate now.', err)
+    process.exit(1)
+  }
 }
 
-Glue.compose(manifest, { relativeTo: __dirname }, (err, server) => {
-  if (err) {
-    console.log('server.register err:', err);
-  }
-  server.start(() => {
-    console.log('✅  Server is listening on ' + server.info.uri.toLowerCase());
-  });
-});
-
- // cek koneksi database 
-//  mongoose.connect(db.database.uri, {useNewUrlParser: true, useUnifiedTopology: true});
-//  mongoose.connection.on('error', console.error.bind(console, 'Connection error.'));
-//  mongoose.connection.once('open', function() {console.log("✅  Connected to database. success!");
-//  }); 
+startServer()

@@ -1,11 +1,12 @@
-require('../models/User');
+'use strict'
 
-const mongoose = require('mongoose');
-const crypto = require('crypto');
-const User = mongoose.model('User');
+const mongoose = require('mongoose')
+const crypto = require('crypto')
+require('../models/User')
+const User = mongoose.model('User')
 
 
-const listUser = async (user, query, callback) => {
+const listUser = async (user, query) => {
 
   const myCustomLabels = {
     totalDocs: 'itemCount',
@@ -24,6 +25,7 @@ const listUser = async (user, query, callback) => {
     customLabels: myCustomLabels,
   };
 
+  let result_search
   if(query.search){
     var search_params = [
       { username : new RegExp(query.search,"i") },
@@ -35,16 +37,21 @@ const listUser = async (user, query, callback) => {
     result_search = User.find().where("delete_status").ne("deleted");
   }
 
-  User.paginate(result_search, options).then(function (results) {
-    const res = {
-      users: results.itemsList.map(users => users.toJSONFor()),
-      _meta: results._meta,
-    }
-    return callback(null, res);
-  }).catch(err => callback(err, null));
+  try {
+    let getUser = await User.paginate(result_search, options)
+    let result = {
+      users: getUser.itemsList.map(users => users.toJSONFor()),
+      _meta: getUser._meta,
+    } 
+    return result
+  } catch (error) {
+    return error
+  }
+
+  
 }
 
-const resetPasswordbyId = async (pay, id, category, user, callback) => {
+const resetPasswordbyId = async (pay, id, category, user) => {
   try {
      const payloads = {};
      const payload = (pay == null ? {} : pay);
@@ -57,61 +64,64 @@ const resetPasswordbyId = async (pay, id, category, user, callback) => {
 
     const params = Object.assign(payload,payloads);
     const result = await User.findByIdAndUpdate(id, { $set: params }, { new: true });
-    callback(null, result);
+    return result
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 
-const getUserByUsername = async (username, callback) => {
-  User.findOne({ username }, (err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
-}
-
-const getUserById = async (id, category, callback) => {
-  let result;
+const getUserByUsername = async (username) => {
   try {
-    result = await User.findById(id)
-    callback(null, result);
+    let users = await User.findOne({username})
+    return users
   } catch (error) {
-    callback(error, null);
+    console.error(error);
   }
 }
 
-const createUser = async (payload, callback) => {
+const getUserById = async (id) => {
   try {
-    payload.salt = crypto.randomBytes(16).toString('hex');
-    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
-    const user = new User(payload);
-    const result = await user.save();
-    callback(null, result);
+    let result = await User.findById(id)
+    return result.toJSONFor()
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 
-const changePassword = (user, payload, callback) => {
-  let passwords = user.setPassword(payload.password)
+const createUser = async (payload) => {
+  try {
+    payload.salt = crypto.randomBytes(16).toString('hex')
+    payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex')
+    let user = await new User(payload)
+    let result = await user.save()
+    return result
+  } catch (error) {
+    return error
+  }
+}
 
-  let users = {
-    fullname: payload.fullname ? payload.fullname : user.fullname,
-    username: payload.username ? payload.username : user.username,
-    password: passwords,
-    email: payload.email ? payload.email: user.email,
-    role: payload.role ? payload.role: user.role,
+const changePassword = async (payload, user) => {
+  try {
+    let passwords = user.setPassword(payload.password)
+
+    let users = {
+      fullname: payload.fullname ? payload.fullname : user.fullname,
+      username: payload.username ? payload.username : user.username,
+      password: passwords,
+      email: payload.email ? payload.email : user.email,
+      role: payload.role ? payload.role : user.role,
+    }
+
+    user = Object.assign(user, users);
+    let result = await user.save()
+    return result
+  } catch (error) {
+    return error
   }
   
-  user = Object.assign(user, users);
-
-  user.save((err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
 }
 
-const updateUsers = async (id, pay, category, author, callback) =>{
+const updateUsers = async (id, pay, category, author) =>{
   try {
     const payloads = {};
     const payload = (pay == null ? {} : pay );
@@ -126,12 +136,11 @@ const updateUsers = async (id, pay, category, author, callback) =>{
       payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
     }
     const params = Object.assign(payload,payloads);
-    
     const result = await User.findByIdAndUpdate(id,
     { $set: params }, { new: true });
-    callback(null, result);
+    return result
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 
@@ -166,4 +175,4 @@ module.exports = [
     method: updateUsers
   },
 ];
- 
+

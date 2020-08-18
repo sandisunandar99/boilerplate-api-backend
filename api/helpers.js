@@ -40,9 +40,9 @@
           data: null
       }
 
-      var keys = Object.keys(err.errors)
-      for (var index in keys) {
-        var key = keys[index]
+      let keys = Object.keys(err.errors)
+      for (let index in keys) {
+        let key = keys[index]
         if (err.errors[key].hasOwnProperty('message')) {
           response.message = key +' '+err.errors[key].value +' '+ err.errors[key].message
         }
@@ -57,9 +57,8 @@
   const errorHandlers = [joiResponseErrorHandler, mongooseResponseValidationErrorHandler, defaultResponseErrorHandler]
 
   const constructErrorResponse = (err) => {
-    var response
-    for (var handler in errorHandlers) {
-
+    let response
+    for (let handler in errorHandlers) {
       let handlerFn = errorHandlers[handler]
 
       if (typeof (handlerFn) === 'function') {
@@ -67,7 +66,7 @@
         if (response !== null) break
       }
     }
-
+    
     return response
   }
 

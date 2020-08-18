@@ -28,7 +28,7 @@ module.exports = (server) => {
     {
       method: 'POST',
       path: '/login',
-      config: {
+      options: {
         validate: inputValidations.LoginPayload,
         response: outputValidations.AuthOnLoginOutputValidationConfig,
         description: 'Login  user',
@@ -100,7 +100,7 @@ module.exports = (server) => {
         auth: 'jwt',
         validate: inputValidations.UpdatePayload,
         response: outputValidations.AuthOnPutOutputValidationConfig,
-        description: 'Reset password me',
+        description: 'Reset password my own',
         tags: ['api', 'users'],
         pre: [
           CheckRoleResetPasswordMe

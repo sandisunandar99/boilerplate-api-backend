@@ -2,8 +2,9 @@ const Joi = require('joi')
 const constructErrorResponse = require('./helpers').constructErrorResponse
 const _ = require('lodash')
 
-const errorHandler = (request, reply, source, error) => {
-  return reply(constructErrorResponse(error.data)).code(422)
+const errorHandler = async (request, h, error) => {
+  let result = await constructErrorResponse(error)
+  return h.response(result).code(422).takeover()
 }
 
 const validateOptions = {
