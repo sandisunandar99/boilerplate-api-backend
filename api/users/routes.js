@@ -100,7 +100,7 @@ module.exports = (server) => {
         auth: 'jwt',
         validate: inputValidations.UpdatePayload,
         response: outputValidations.AuthOnPutOutputValidationConfig,
-        description: 'Reset password me',
+        description: 'Reset password my own',
         tags: ['api', 'users'],
         pre: [
           CheckRoleResetPasswordMe

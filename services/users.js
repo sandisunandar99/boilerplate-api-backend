@@ -51,7 +51,7 @@ const listUser = async (user, query) => {
   
 }
 
-const resetPasswordbyId = async (pay, id, category, user, callback) => {
+const resetPasswordbyId = async (pay, id, category, user) => {
   try {
      const payloads = {};
      const payload = (pay == null ? {} : pay);
@@ -64,9 +64,9 @@ const resetPasswordbyId = async (pay, id, category, user, callback) => {
 
     const params = Object.assign(payload,payloads);
     const result = await User.findByIdAndUpdate(id, { $set: params }, { new: true });
-    callback(null, result);
+    return result
   } catch (error) {
-    callback(error, null);
+    return error
   }
 }
 
@@ -100,23 +100,25 @@ const createUser = async (payload) => {
   }
 }
 
-const changePassword = (user, payload, callback) => {
-  let passwords = user.setPassword(payload.password)
+const changePassword = async (payload, user) => {
+  try {
+    let passwords = user.setPassword(payload.password)
 
-  let users = {
-    fullname: payload.fullname ? payload.fullname : user.fullname,
-    username: payload.username ? payload.username : user.username,
-    password: passwords,
-    email: payload.email ? payload.email: user.email,
-    role: payload.role ? payload.role: user.role,
+    let users = {
+      fullname: payload.fullname ? payload.fullname : user.fullname,
+      username: payload.username ? payload.username : user.username,
+      password: passwords,
+      email: payload.email ? payload.email : user.email,
+      role: payload.role ? payload.role : user.role,
+    }
+
+    user = Object.assign(user, users);
+    let result = await user.save()
+    return result
+  } catch (error) {
+    return error
   }
-
-  user = Object.assign(user, users);
-
-  user.save((err, user) => {
-    if (err) return callback(err, null);
-    return callback(null, user);
-  });
+  
 }
 
 const updateUsers = async (id, pay, category, author) =>{
@@ -134,7 +136,6 @@ const updateUsers = async (id, pay, category, author) =>{
       payload.hash = crypto.pbkdf2Sync(payload.password, payload.salt, 10000, 512, 'sha512').toString('hex');
     }
     const params = Object.assign(payload,payloads);
-    console.log(params);
     const result = await User.findByIdAndUpdate(id,
     { $set: params }, { new: true });
     return result
