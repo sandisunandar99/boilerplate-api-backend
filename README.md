@@ -58,7 +58,7 @@ $ npm test
 <a href="https://www.buymeacoffee.com/sandisunandar99" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" style="height: 51px !important;width: 217px !important;" ></a>
 
 ## :sparkling_heart: Bonus :sparkling_heart:
-POSTMAN Rest API, check on folder.. happy coding :kissing_heart::kissing_heart::kissing_heart:
+POSTMAN Rest API, check on folder .. dont forget to clik star :star: and fork :fork_and_knife: .. happy coding :kissing_heart::kissing_heart::kissing_heart:
 
 ## License
 Permission is hereby granted, free of charge, to any person obtaining a copy
