@@ -3,7 +3,7 @@
 ## Core Stack
 
 - **Node.js** - [http://nodejs.org/](http://nodejs.org/)
-- **Hapi** - [http://hapijs.com/](http://hapijs.com/)
+- **Hapi.js v.17** - [http://hapijs.com/](http://hapijs.com/)
 - **Mongo DB** - [https://mongodb.github.io/node-mongodb-native/3.5/](https://mongodb.github.io/node-mongodb-native/3.5/)
 
 ## Quick Start
